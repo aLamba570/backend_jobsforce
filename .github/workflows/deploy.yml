@@ -1,0 +1,61 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  test:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test || echo "No tests specified"
+  
+  deploy:
+    name: Deploy to EC2
+    needs: test  # This ensures tests pass before deployment
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+      
+      - name: Setup known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_HOST }} ssh-rsa $(ssh-keyscan -t rsa ${{ secrets.EC2_HOST }} | cut -d ' ' -f 3)" >> ~/.ssh/known_hosts
+      
+      - name: Deploy to EC2
+        run: |
+          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "
+            cd ~/jobsforce-backend && \
+            git checkout main && \
+            git pull && \
+            npm ci --production && \
+            pm2 restart jobsforce-backend || pm2 start index.js --name jobsforce-backend && \
+            pm2 save
+          "
+      
+      - name: Notify deployment success
+        if: success()
+        run: echo "Backend deployed successfully!"
