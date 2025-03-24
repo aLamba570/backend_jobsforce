@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Resume Upload</title>
+</head>
+<body>
+  <h1>Simple Resume Upload</h1>
+  <form id="uploadForm">
+    <input type="file" name="resume" accept=".pdf,.docx" required />
+    <button type="submit">Upload</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZGZiZTFhY2RlMjI2NTNlNWNkM2Q4NCIsImlhdCI6MTc0MjcxNjQ2MCwiZXhwIjoxNzQ1MzA4NDYwfQ.hT_BSdrl9fLjpWGwOnYI0ytpslEnj0JShRdhS_foITo';
+      const formData = new FormData(e.target);
+      
+      try {
+        document.getElementById('result').textContent = 'Uploading...';
+        
+        const response = await fetch('/api/recommendations/upload-resume', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        
+        const text = await response.text();
+        document.getElementById('result').textContent = text;
+      } catch (error) {
+        document.getElementById('result').textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
