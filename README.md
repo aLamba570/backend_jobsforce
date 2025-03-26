@@ -49,8 +49,8 @@ JobsForce is an intelligent job recommendation platform that uses advanced algor
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/alamba570/jobsforce-recommendation-system.git
-cd jobsforce-recommendation-system
+git clone https://github.com/alamba570/backend_jobsforce.git
+cd backend_jobsforce
 ```
 
 ### 2. Backend Setup
@@ -178,6 +178,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## 📞 Contact
 
-**Project Link:** [https://github.com/alamba570/jobsforce-recommendation-system](https://github.com/alamba570/jobsforce-recommendation-system)
+**Project Link:** [https://github.com/alamba570/frontend_jobsforce](https://github.com/alamba570/frontend_jobsforce)
 
-Made with ❤️ by the JobsForce Team
+Made with ❤️ by Ankush
